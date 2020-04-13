@@ -12,44 +12,64 @@ chrome_options.add_experimental_option('prefs',  {
     }
 )
 
-driver = webdriver.Chrome(executable_path='/Users/nickjstevens/Documents/GitHub/chromedriver', options = chrome_options)
+driver = webdriver.Chrome(executable_path='/Users/nickjstevens/Documents/GitHub/RGP-web-scraping/chromedriver', options = chrome_options)
 
 
-visitedlinks = set()
-visitedpdfs = set()
+link_queue = set()
+crawled_link = set()
+visited_links = set()
+visited_pdfs = set()
 
-driver.get("https://www.iaea.org/resources/safety-standards/search?facility=All&term_node_tid_depth_2=All&field_publication_series_info_value=&combine=&items_per_page=All")
+# start page
+link_queue.add("https://www.hse.gov.uk/")
 
-elems = driver.find_elements_by_xpath("//h4/a[@href]")
-for elem in elems:
-    hrefelem = elem.get_attribute("href")
-    if 'publications' in hrefelem:
-        visitedlinks.add(hrefelem)
-    #print(hrefelem)
 
-print(len(visitedlinks))
+def get_page(url):
+    driver.get(url)
 
-i = 0
-
-for link_ in visitedlinks:
-    driver.get(link_)
-
+def get_links():
     elems = driver.find_elements_by_xpath("//a[@href]")
     for elem in elems:
-        classelem = elem.get_attribute("class")
         hrefelem = elem.get_attribute("href")
-        if '.pdf' in hrefelem:
-            if 'btn-primary' in classelem:
-                visitedpdfs.add(hrefelem)      
-                print(hrefelem) 
-                driver.get(hrefelem)
-                time.sleep(5)
+        if 'hse.gov.uk' in hrefelem:
+            link_queue.add(hrefelem)
 
-    print(i)
-    i = i + 1
 
-#print(visitedpdfs)
-#print(len(visitedpdfs))
+def crawler():
+    while len(link_queue):
+        current_url = link_queue.pop()
+        crawled_link.add(current_url)
+        get_page(current_url)
+        get_links()
+
+
+
+crawler()
+
+
+print(len(links))
+print(len(visited_links))
+print(len(visited_pdfs))
+
+# i = 0
+
+# for link_ in visitedlinks:
+#     driver.get(link_)
+
+#     elems = driver.find_elements_by_xpath("//a[@href]")
+#     for elem in elems:
+#         hrefelem = elem.get_attribute("href")
+#         if '.pdf' in hrefelem:
+#             visitedpdfs.add(hrefelem)      
+#             print(hrefelem) 
+#             driver.get(hrefelem)
+#             time.sleep(5)
+
+#     print(i)
+#     i = i + 1
+
+# #print(visitedpdfs)
+# #print(len(visitedpdfs))
 
 time.sleep(5)
 driver.quit()

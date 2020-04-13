@@ -12,7 +12,7 @@ chrome_options.add_experimental_option('prefs',  {
     }
 )
 
-driver = webdriver.Chrome(executable_path='/Users/nickjstevens/Documents/GitHub/chromedriver', options = chrome_options)
+driver = webdriver.Chrome(executable_path='/Users/nickjstevens/Documents/GitHub/RGP-web-scraping/chromedriver', options = chrome_options)
 
 
 visitedlinks = set()
